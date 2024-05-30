@@ -33,4 +33,4 @@ async def handleMessage(msg):
 
 
 if __name__ == '__main__':
-     SocketIO.run(app=app)
+     SocketIO.run(app) 

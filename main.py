@@ -1,6 +1,6 @@
 # flask --app main --debug run
 from flask import Flask,send_file,request
-from flask_socketio import SocketIO,send
+from flask_socketio import SocketIO,emit
 from getEnvironmentData import GetEnvironmentData
 import asyncio 
 
@@ -20,12 +20,12 @@ def index():
 
 @socketio.on('sendCurrentData')
 async def handleMessage(msg):
-    ##currentData= GetEnvironmentData() 
+    client_id = request.sid
     while True:
-        currentData= GetEnvironmentData()
+        currentData = GetEnvironmentData()
+        # Envía los datos al cliente utilizando el identificador único
+        emit('currentData', currentData, room=client_id)  
         await asyncio.sleep(2)
-        return currentData
-
 
 
 

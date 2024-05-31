@@ -8,8 +8,9 @@ sustrateSensorPin = 21
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(sustrateSensorPin, GPIO.IN)
 
+dhtDevice = adafruit_dht.DHT22(board.D4)
+
 def GetEnvironmentData():
-    dhtDevice = adafruit_dht.DHT22(board.D4)
     sensor_soil_value = GPIO.input(sustrateSensorPin)
     
     temperature_c = dhtDevice.temperature

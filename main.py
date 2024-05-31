@@ -16,7 +16,7 @@ async def websocket_server(websocket, path):
         print("Conexión cerrada por el cliente")
 
 # Configurar el servidor WebSocket
-start_websocket_server = websockets.serve(websocket_server, "localhost", 8765)
+start_websocket_server = websockets.serve(websocket_server, "192.168.1.91", 8765)
 
 # Definir las rutas HTTP
 

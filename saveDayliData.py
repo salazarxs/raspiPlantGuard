@@ -31,7 +31,7 @@ def SaveData(humidity, soilHumidity, temperature):
 
         # Guardar el DataFrame en el archivo, incluyendo el encabezado solo si el archivo está vacío
         df_nuevo_registro.to_csv(archivo_csv, mode='a', index=False, header=not file_exists)
-
+        print('Data saved successful')
         return True
     except Exception as e:
         print(f"Error al guardar los datos: {e}")

@@ -1,6 +1,8 @@
 import asyncio
 import websockets
 from flask import Flask, request, send_file
+from getEnvironmentData import GetEnvironmentData
+from saveDayliData import SaveData
 
 app = Flask(__name__)
 
@@ -8,9 +10,8 @@ app = Flask(__name__)
 async def websocket_server(websocket, path):
     try:
         while True:
-            message = await websocket.recv()
-            print(f"Mensaje recibido: {message}")
-            await websocket.send("Mensaje recibido por el servidor")
+            message = GetEnvironmentData()
+            await websocket.send(message)
     except websockets.exceptions.ConnectionClosedOK:
         print("Conexión cerrada por el cliente")
 
@@ -18,19 +19,11 @@ async def websocket_server(websocket, path):
 start_websocket_server = websockets.serve(websocket_server, "localhost", 8765)
 
 # Definir las rutas HTTP
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    uploaded_file = request.files['file']
-    if uploaded_file.filename != '':
-        uploaded_file.save(uploaded_file.filename)
-        return 'Archivo guardado correctamente'
-    else:
-        return 'No se ha enviado ningún archivo'
 
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     try:
-        return send_file(filename, as_attachment=True)
+        return send_file(f"./dayliData/{filename}.csv", as_attachment=True)
     except FileNotFoundError:
         return 'Archivo no encontrado'
 
@@ -41,4 +34,8 @@ if __name__ == '__main__':
     asyncio.get_event_loop().run_forever()
 
     # Iniciar el servidor Flask
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='192.168.1.91', port=80)
+
+while True:
+    SaveData()
+    asyncio.sleep(300)

@@ -36,7 +36,6 @@ def run_flask():
 # Función para ejecutar el servidor WebSocket
 async def run_websocket():
     await start_websocket_server
-    await asyncio.get_event_loop().run_forever()
 
 # Función asíncrona para guardar datos periódicamente
 async def periodic_save_data():
@@ -55,8 +54,8 @@ if __name__ == '__main__':
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
 
-    # Iniciar el servidor WebSocket y la tarea de guardado periódico en el bucle de eventos
-    loop = asyncio.get_event_loop()
-    loop.create_task(run_websocket())
-    loop.create_task(periodic_save_data())
-    loop.run_forever()
+    # Iniciar el servidor WebSocket en el bucle de eventos
+    asyncio.run(run_websocket())
+
+    # Iniciar la tarea de guardado periódico en el bucle de eventos
+    asyncio.run(periodic_save_data())

@@ -4,6 +4,7 @@ from flask import Flask, request, send_file
 import threading
 from getEnvironmentData import GetEnvironmentData
 from saveDayliData import SaveData
+import json
 
 app = Flask(__name__)
 
@@ -40,7 +41,12 @@ async def run_websocket():
 # Función asíncrona para guardar datos periódicamente
 async def periodic_save_data():
     while True:
-        SaveData()
+        data = GetEnvironmentData()
+        data_dict = json.loads(data)
+        humidity = data_dict["hum"]
+        temperature = data_dict["temp"]
+        sustrate_humidity = data_dict["sustrate_humidity"]
+        SaveData(humidity=humidity,soilHumidity=sustrate_humidity,temperature=temperature)
         await asyncio.sleep(300)  # Esperar 300 segundos (5 minutos) antes de guardar nuevamente
 
 # Ejecutar ambos servidores y la tarea de guardado periódico en un bucle de eventos

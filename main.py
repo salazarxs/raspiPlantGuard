@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 from flask import Flask, request, send_file
+import threading
 from getEnvironmentData import GetEnvironmentData
 from saveDayliData import SaveData
 
@@ -12,6 +13,7 @@ async def websocket_server(websocket, path):
         while True:
             message = GetEnvironmentData()
             await websocket.send(message)
+            await asyncio.sleep(1)  # Esperar un segundo antes de enviar el próximo mensaje
     except websockets.exceptions.ConnectionClosedOK:
         print("Conexión cerrada por el cliente")
 
@@ -19,7 +21,6 @@ async def websocket_server(websocket, path):
 start_websocket_server = websockets.serve(websocket_server, "192.168.1.91", 8765)
 
 # Definir las rutas HTTP
-
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     try:
@@ -27,15 +28,29 @@ def download_file(filename):
     except FileNotFoundError:
         return 'Archivo no encontrado'
 
-# Ejecutar ambos servidores en un bucle de eventos
-if __name__ == '__main__':
-    # Iniciar el servidor WebSocket
-    asyncio.get_event_loop().run_until_complete(start_websocket_server)
-    asyncio.get_event_loop().run_forever()
-
-    # Iniciar el servidor Flask
+# Función para ejecutar el servidor Flask
+def run_flask():
     app.run(host='192.168.1.91', port=80)
 
-while True:
-    SaveData()
-    asyncio.sleep(300)
+# Función para ejecutar el servidor WebSocket
+async def run_websocket():
+    await start_websocket_server
+    await asyncio.get_event_loop().run_forever()
+
+# Función asíncrona para guardar datos periódicamente
+async def periodic_save_data():
+    while True:
+        SaveData()
+        await asyncio.sleep(300)  # Esperar 300 segundos (5 minutos) antes de guardar nuevamente
+
+# Ejecutar ambos servidores y la tarea de guardado periódico en un bucle de eventos
+if __name__ == '__main__':
+    # Iniciar el servidor Flask en un hilo separado
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+
+    # Iniciar el servidor WebSocket y la tarea de guardado periódico en el bucle de eventos
+    loop = asyncio.get_event_loop()
+    loop.create_task(run_websocket())
+    loop.create_task(periodic_save_data())
+    loop.run_forever()

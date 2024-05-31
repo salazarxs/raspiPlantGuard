@@ -33,10 +33,6 @@ def download_file(filename):
 def run_flask():
     app.run(host='192.168.1.91', port=80)
 
-# Función para ejecutar el servidor WebSocket
-async def run_websocket():
-    await start_websocket_server
-
 # Función asíncrona para guardar datos periódicamente
 async def periodic_save_data():
     while True:
@@ -48,14 +44,20 @@ async def periodic_save_data():
         SaveData(humidity=humidity,soilHumidity=sustrate_humidity,temperature=temperature)
         await asyncio.sleep(100)  # Esperar 300 segundos (5 minutos) antes de guardar nuevamente
 
-# Ejecutar ambos servidores y la tarea de guardado periódico en un bucle de eventos
+# Ejecutar el bucle de eventos y ambos servidores en él
 if __name__ == '__main__':
     # Iniciar el servidor Flask en un hilo separado
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
 
-    # Iniciar el servidor WebSocket en el bucle de eventos
-    asyncio.run(run_websocket())
+    # Crear un bucle de eventos
+    loop = asyncio.get_event_loop()
 
-    # Iniciar la tarea de guardado periódico en el bucle de eventos
-    asyncio.run(periodic_save_data())
+    # Ejecutar el servidor WebSocket en el bucle de eventos
+    asyncio.ensure_future(start_websocket_server)
+
+    # Ejecutar la tarea de guardado periódico en el bucle de eventos
+    asyncio.ensure_future(periodic_save_data())
+
+    # Iniciar el bucle de eventos
+    loop.run_forever()

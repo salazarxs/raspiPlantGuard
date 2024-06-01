@@ -42,7 +42,7 @@ async def periodic_save_data():
         temperature = data_dict["temp"]
         sustrate_humidity = data_dict["sustrate_humidity"]
         SaveData(humidity=humidity,soilHumidity=sustrate_humidity,temperature=temperature)
-        await asyncio.sleep(100)  # Esperar 300 segundos (5 minutos) antes de guardar nuevamente
+        await asyncio.sleep(300)  # Esperar 300 segundos (5 minutos) antes de guardar nuevamente
 
 # Ejecutar el bucle de eventos y ambos servidores en él
 if __name__ == '__main__':

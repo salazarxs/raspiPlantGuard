@@ -8,10 +8,14 @@ from saveDayliData import SaveData
 import json
 
 app = Flask(__name__)
-CORS(app,resources={r"/*": {"origins": ["http://192.168.1.94:3000","http://localhost:3000"], "methods":["GET","POST"]}})
+CORS(app,resources={r"/*": {"origins": ["http://192.168.1.94:3000","http://localhost:3000"]}})
 
 # Definir la función de servidor WebSocket
 async def websocket_server(websocket, path):
+    websocket.request_headers['Access-Control-Allow-Origin'] = 'http://192.168.1.94:3000'
+    websocket.request_headers['Access-Control-Allow-Credentials'] = 'true'
+    websocket.request_headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    websocket.request_headers['Access-Control-Allow-Headers'] = 'Content-Type'
     try:
         while True:
             message = GetEnvironmentData()

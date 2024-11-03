@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 from flask import Flask, request, send_file
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import threading
 from getEnvironmentData import GetEnvironmentData
 from saveDayliData import SaveData
@@ -27,6 +27,7 @@ async def websocket_server(websocket, path):
 
 # Definir las rutas HTTP
 @app.route('/download/<filename>', methods=['GET'])
+@cross_origin(origins=["http://192.168.1.94:3000","http://localhost:3000"])
 def download_file(filename):
     try:
         return send_file(f"./dayliData/{filename}.csv", as_attachment=True)

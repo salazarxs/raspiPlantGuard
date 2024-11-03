@@ -17,8 +17,9 @@ async def websocket_server(websocket, path):
             message = GetEnvironmentData()
             await websocket.send(message)
             await asyncio.sleep(1)  # Esperar un segundo antes de enviar el próximo mensaje
-    except websockets.exceptions.ConnectionClosedOK:
+    except websockets.exceptions.ConnectionClosedOK as error :
         print("Conexión cerrada por el cliente")
+        print(error)
 
 # Definir las rutas HTTP
 @app.route('/download/<filename>', methods=['GET'])

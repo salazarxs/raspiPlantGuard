@@ -20,7 +20,7 @@ def SaveData(humidity, soilHumidity, temperature):
         if(soilHumidity):
             # Crear el nuevo registro como diccionario
             nuevo_registro = {
-            "date": [today],
+            "date": [fecha_str],
             "humidity": [humidity],
             "soilHumidity": [soilHumidity],
             "temperature": [temperature]

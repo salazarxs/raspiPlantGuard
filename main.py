@@ -1,12 +1,14 @@
 import asyncio
 import websockets
 from flask import Flask, request, send_file
+from flask_cors import CORS
 import threading
 from getEnvironmentData import GetEnvironmentData
 from saveDayliData import SaveData
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 # Definir la función de servidor WebSocket
 async def websocket_server(websocket, path):
@@ -28,7 +30,7 @@ def download_file(filename):
 
 # Función para ejecutar el servidor Flask
 def run_flask():
-    app.run(host='192.168.1.91', port=80)
+    app.run(host='192.168.1.92', port=80)
 
 # Función asíncrona para guardar datos periódicamente
 async def periodic_save_data():
@@ -57,7 +59,7 @@ if __name__ == '__main__':
     asyncio.set_event_loop(loop)
 
     # Ejecutar el servidor WebSocket en el bucle de eventos
-    loop.run_until_complete(websockets.serve(websocket_server, "192.168.1.91", 8765))
+    loop.run_until_complete(websockets.serve(websocket_server, "192.168.1.92", 8765))
 
     # Ejecutar la tarea de guardado periódico en el bucle de eventos
     loop.create_task(periodic_save_data())

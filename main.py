@@ -8,7 +8,7 @@ from saveDayliData import SaveData
 import json
 
 app = Flask(__name__)
-CORS(app,resources={r"/*": {"origins": ["http://192.168.1.94:3000","http://localhost:3000"],}})
+CORS(app,resources={r"/*": {"origins": ["http://192.168.1.94:3000","http://localhost:3000"], "methods":["GET","POST"]}})
 
 # Definir la función de servidor WebSocket
 async def websocket_server(websocket, path):
